@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <script src="https://unpkg.com/axios/dist/axios.min.js" defer></script>
+        <title>node index</title>
+    </head>
+    <body>
+        <div id="sound">--</div>
+        <br><br>
+        <input id="name" type="text" placeholder="API 요청" /><br><br>
+        <button onclick="getSound()">API 요청 (fetch)</button>
+        <button onclick="getSoundByAxios()">API 요청 (axios)</button>
+
+        <script>
+            
+            // ex) Fetch
+            function getSound() {
+                const name = document.getElementById("name").value;
+
+                // Fetch API : 서버에 요청 함수 (GET, POST, PUT, DELETE), npm -> 'axios'
+                fetch(`http://localhost:33333/sound/${name}`)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        console.log(data.sound);
+                        document.getElementById("sound").innerHTML = data.sound + ' by fetch';
+                    });
+            }
+            
+            // ex) Axios
+            function getSoundByAxios() {
+                const name = document.getElementById("name").value;
+                axios
+                    .get(`http://localhost:33333/sound/${name}`)
+                    .then((res) => {
+                        console.log(res.data);
+                        document.getElementById('sound').innerText = res.data.sound + ' by axios'
+                    })
+                    .catch((err) => console.error(err));
+            }
+        </script>
+    </body>
+</html>
