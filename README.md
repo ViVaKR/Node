@@ -7,32 +7,33 @@
      1. console.log(global)
   4. Has Common Core Modules
   5. CommonJS modules instead of ES6 modules
-
-    ```javascript
-        const os = require('os');
-        console.log(os.type());
-        console.log(os.version());
-        console.log(os.homedir());
-        
-        const path = require('path');
-        console.log(__dirname);
-        console.log(__filename);
-    ```
-
   6. Missing some JS APIs like fetch
+
+```bash
+  const os = require('os');
+  console.log(os.type());
+  console.log(os.version());
+  console.log(os.homedir());
+  const path = require('path');
+  console.log(__dirname);
+  console.log(__filename);
+```
 
 ## npm
 
-## npm : node package manager
+```bash
+  npm install -g npm@latest
+  npm init -y
 
-$ npm init
+  npm install `<module>` # 설치
+  npm uninstall `<module>` # 삭제
+```
+
+## npm : node package manager
 
 package.json : 패키지에 대한 개요
 package-lock : 패키지에 대한 상세 내용
 node_modules : 모듈 저장소
-
-$ npm install `<module>` # 설치
-$ npm uninstall `<module>` # 삭제
 
 ## - Cross-Origin (교차 출처) : 프로토콜, 도메인, 포트번호 가 다른 경우
 
