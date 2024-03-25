@@ -1,0 +1,76 @@
+View -> Code behind implements a View interface, exposing methods for setting values of controls, agnositc of view technology.
+
+- Will work just as well, same Presenter class could work against a WPF implementation of the View interface.
+
+- take full advantage of WPFs two-way databinding to both rerieve data from the view and update the view?
+
+- forego need to implemnet MVP style accessors for all your controls and write code to always callback to the view to set control values?
+
+
+[ Introducing Model-View-ViewModel ]
+- Developed/coined by John Gossman, WPF/Silvelight architext.
+- Microsoft Expression Blend Written entirely in WPF using the M-V-VM pattern.
+
+
+Strong Binding
+
+WPF View -> () -->  ViewModel -> (Apply) --> Apply Model
+
+Model -> (Errors) -> ViewModel -> WPF View
+
+
+보기 -> 코드 숨김은 보기 기술에 관계없이 컨트롤 값을 설정하는 방법을 노출하는 보기 인터페이스를 구현합니다.
+
+- 잘 작동합니다. 동일한 Presenter 클래스가 View 인터페이스의 WPF 구현에 대해 작동할 수 있습니다.
+
+- WPF의 양방향 데이터 바인딩을 최대한 활용하여 뷰에서 데이터를 검색하고 뷰를 업데이트하시겠습니까?
+
+- 모든 컨트롤에 대해 MVP 스타일 접근자를 구현하고 컨트롤 값을 설정하기 위해 항상 뷰에 콜백하는 코드를 작성해야 합니까?
+
+
+[ Model-View-ViewModel 소개 ]
+- WPF/Silvelight 아키텍처인 John Gossman이 개발/만들었습니다.
+- Microsoft Expression Blend는 MV-VM 패턴을 사용하여 WPF로 완전히 작성되었습니다.
+
+
+강력한 바인딩
+
+WPF 보기 -> () --> ViewModel -> (적용) --> 모델 적용
+
+모델 -> (오류) -> ViewModel -> WPF 보기
+
+
+ViewModel : Model 의 미러 역할
+
+- 오직 데이터바인딩을 통하여 이루어짐.
+- 실제로는 뷰의 특정 컨트롤에 대하여 알 필요가 없어야 함.
+- 속성 일치를 노출하는 일부 데이터 컨텍스트에 바인딩 할 것으로 기대
+- 뷰 모델은 뷰의 거울일 뿐임.
+- 뷰 모델 아이디어는 매우 깔끔.함.
+- 데이터 컨텍스트 또는 뷰가 되므로 별도의 작업을 수행할 필요가 없기 때문.
+- 여기 저기서 서로 다른 컨트롤에 대한 모든 데이터 컨텍스트 설정할 필요 없이
+- 하나의 큰 어뎁터가 됨.
+
+[ M-V-VM ] : The ViewModel (dont'd)
+
+- Exposes publid properties that XAML views databind to
+    - Individual properties supporting TextBoxes, Labels, other Content Controls
+        Can be DPs if logic will be updating them and they need to be pushed out to the View
+    - ObservableCollections of model or view medel objects supporting ListBoxes, GridViews, other ItemsControls
+        * ObservableCollections will fire NotifyCollectionChanged events when items added/removed.
+        * The objects they contain must support change notifications if the view needs to be notified of individual property updates.
+    - Dependency Injection.
+
+    - Exposes public methods to manipulate ViewModel, invoked by events/commands from code behind.
+    - When user updates the View, databinding pushed changes to the ViewModel, databinding pushes changes to the View.
+
+    # 양방향
+        - View (XAML)        : Updated ~> (databinding pushed to) ~> ViewModel
+        - ViewModel (behind) : updates ViewModel ~> (databinding pushed to ) ~> View
+
+    # M-V-VM Code behind
+    - Strive to keep code behind as clean as possible.
+    - You are on the right track when you almost NEVER have a need to name a control with x:Name
+    - Should only include:
+        * Basic wiring to instantiate a ViewModel (and perhaps inject it with any services that it needs).
+        * Command bindings and scaffolding for command Execute/CanExecut pair, which simply delegate to public ViewModel methods.
