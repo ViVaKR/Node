@@ -1,5 +1,5 @@
 import express, { response } from "express";
-
+import { query, validationResult, body, matchedData } from 'express-validator'
 //* 데이터
 const mockUsers = [
     { id: 1, username: 'anson', displayName: 'Anson' },
@@ -13,118 +13,132 @@ const mockUsers = [
 
 const app = express();
 
-//* middleware
-app.use(express.json());
-
 const PORT = process.env.PORT || 58880;
 
 //* prevent 304 status code.
 app.disable('etag');
 
-//* [ GET ]
-app.get('/', (req, res) => {
-    res.status(201).send({ msg: 'Hello, World!' });
-});
+//--> Global Middlaware
+app.use(express.json());
+const loggingMiddleware = (req, res, next) => {
+    console.log(`${req.method} -> ${req.url}`);
+    next();
+};
+
+// app.use(loggingMiddleware, (req, res, next) => {
+//     console.log('Fineshed Logging...');
+//     next();
+// });
+
+//--> Refactoring Part
+const resolveIndexbyUserId = (req, res, next) => {
+    const { params: { id } } = req;
+    const parasedId = parseInt(id);
+    if (isNaN(parasedId)) return response.sendStatus(400);
+    const findUserIndex = mockUsers.findIndex((user) => user.id === parasedId);
+    if (findUserIndex === -1) return response.sendStatus(404);
+    req.findUserIndex = findUserIndex;
+    next();
+};
+
+//--> [ GET ]
+app.get('/',
+    (req, res, next) => { console.log('Base URL 1'); next(); },
+    (req, res, next) => { console.log('Base URL 2'); next(); },
+    (req, res, next) => { console.log('Base URL 3'); next(); },
+
+    (req, res) => {
+        res.status(201).send({ msg: 'Hello, World!' });
+    });
 
 // Get All users or filterring
-app.get('/api/users', (req, res) => {
-    console.log(req.query);
-    const { query: { filter, value } } = req;
+app.get('/api/users',
+    query('filter')
+        .isString()
+        .notEmpty()
+        .withMessage("Must not be empty")
+        .isLength({ min: 3, max: 10 })
+        .withMessage("Must be at least 3-10 characters"),
 
-    // when filter and value are undefined
-    if (!filter && !value) return res.send(mockUsers);
+    (req, res) => {
 
-    if (filter && value) return res.send(
-        mockUsers.filter((user) => user[filter].includes(value))
-    )
-    res.send(mockUsers);
-});
+        // console.log(req['express-validator#contexts']);
+
+        //? Validation Checked
+        const result = validationResult(req);
+        console.log(result);
+
+        const { query: { filter, value } } = req;
+        if (!filter && !value) return res.send(mockUsers);
+        if (filter && value) return res.send(
+            mockUsers.filter((user) => user[filter].includes(value))
+        )
+        return res.send(mockUsers);
+    });
 
 // Parameters
-app.get('/api/users/:id', (req, res) => {
-    console.log(req.params);
-    const parsedId = parseInt(req.params.id);
-    console.log(parsedId); // NaN
-    if (isNaN(parsedId)) return res.status(400).send({ msg: 'Bad Request. Invalid Id' });
+app.get('/api/users/:id', resolveIndexbyUserId, (req, res) => {
 
-    const findUser = mockUsers.find((user) => user.id == parsedId);
-
+    const { findUserIndex } = req;
+    const findUser = mockUsers[findUserIndex];
+    // const parsedId = parseInt(req.params.id);
+    // if (isNaN(parsedId)) return res.status(400).send({ msg: 'Bad Request. Invalid Id' });
+    // const findUser = mockUsers.find((user) => user.id == parsedId);
     if (!findUser) return res.sendStatus(404);
-
     return res.send({ msg: findUser });
-
 })
 
 // Query String : Key, Value Pairs, &key=value
 
-// api/priducts
-app.get('/api/products', (req, res) => {
-    res.send([
-        { id: 123, name: 'chicken breast', price: 12.99 }
-    ])
-})
+//* [ POST ]
+app.post('/api/users',
+    [
+        body('username')
+            .notEmpty()
+            .withMessage('Username cannot be empty')
+            .isLength({ min: 5, max: 32 })
+            .withMessage('Username must be at least 5 characters with a max of 32 characters')
+            .isString()
+            .withMessage('Username must be a string!'),
+        body('displayName')
+            .notEmpty()
+    ],
+    (req, res) => {
 
-//* [ PUT ]
-app.post('/api/users', (req, res) => {
+        const result = validationResult(req);
+        console.log(result);
 
-    //! 바로 구문 분석을 하지 않음으로 미들웨어 필요.
-    //& app.use(express.json())
+        if (!result.isEmpty())
+            return res.status(400).send({ error: result.array(), message: "잘못된 데이터입니다." });
 
-    console.log(req.body);
-
-    const { body } = req;
-    const newUser = { id: mockUsers[mockUsers.length - 1].id + 1, ...body };
-    mockUsers.push(newUser);
-    return res.status(201).send(newUser);
-});
+        const data = matchedData(req);
+        //! 바로 구문 분석을 하지 않음으로 미들웨어 필요.--> app.use(express.json())
+        const { body } = req;
+        const newUser = { id: mockUsers[mockUsers.length - 1].id + 1, ...data };
+        mockUsers.push(newUser);
+        return res.status(201).send(newUser);
+    });
 
 //* [ PUT ] : Update Data, 전체 업데이트
-app.put("/api/users/:id", (req, res) => {
-    const { body, params: { id } } = req;
-    const parasedId = parseInt(id);
-
-    if (isNaN(parasedId)) return res.sendStatus(400);
-    const findUserIndex = mockUsers.findIndex((user) => user.id === parasedId);
-    if (findUserIndex === -1) return res.sendStatus(404);
-    mockUsers[findUserIndex] = { id: parasedId, ...body };
-
+app.put("/api/users/:id", resolveIndexbyUserId, (req, res) => {
+    const { body, findUserIndex } = req;
+    mockUsers[findUserIndex] = { id: mockUsers[findUserIndex].id, ...body };
     return res.sendStatus(200);
 });
 
 //* [ PATCH ] : Updae Data, 부분 업데이트
-app.patch('/api/users/:id', (req, res) => {
-    const { body, params: { id } } = req;
-    const parasedId = parseInt(id);
-    if (isNaN(parasedId)) return response.sendStatus(400);
-    const findUserIndex = mockUsers.findIndex((user) => user.id === parasedId);
-
-    if (findUserIndex === -1) return response.sendStatus(404);
-
+app.patch('/api/users/:id', resolveIndexbyUserId, (req, res) => {
+    const { body, findUserIndex } = req;
     mockUsers[findUserIndex] = { ...mockUsers[findUserIndex], ...body }
-
     return res.sendStatus(200);
 });
-
 
 //* [ DELETE ] : DeleteData
-app.delete('/api/users/:id', (req, res) => {
-    const { params: { id } } = req;
-
-    const parsedId = parseInt(id);
-
-    if (isNaN(parsedId)) return res.sendStatus(400);
-
-    const findUserIndex = mockUsers.findIndex(x => x.id === parsedId);
-    if (findUserIndex === -1) return res.sendStatus(404);
-
+app.delete('/api/users/:id', resolveIndexbyUserId, (req, res) => {
+    const { findUserIndex } = req;
     mockUsers.splice(findUserIndex, 1);
     return res.sendStatus(200);
-
-
-
 });
-
-
 
 //------------------------------------------//
 //* Listen
@@ -141,10 +155,11 @@ app.listen(58880, () => {
 // localhost: 58880/air/products?key=value&key2=value2
 // localhost:58880/api/users?filter=username&&value=son
 
-
 //! install extensions
 //* thunder client
 
+//! install packages
+//$ npm i express-validator
 
 /*
 ! Status Codes
