@@ -1,18 +1,11 @@
 import express, { response } from "express";
-import { query, validationResult, body, matchedData } from 'express-validator'
+import { query, validationResult, body, matchedData, checkSchema } from 'express-validator'
+import { createuserValidationSchema } from "./utils/validationSchemas.mjs";
+import usersRouter from "./routes/users.mjs";
+import { mockUsers } from "./utils/constants.mjs";
+
 //* 데이터
-const mockUsers = [
-    { id: 1, username: 'anson', displayName: 'Anson' },
-    { id: 2, username: 'jack', displayName: 'Jack' },
-    { id: 3, username: 'tina', displayName: 'Tina' },
-    { id: 4, username: 'jason', displayName: 'Jason' },
-    { id: 5, username: 'adam', displayName: 'Adam' },
-    { id: 6, username: 'henry', displayName: 'Henry' },
-    { id: 7, username: 'marilyn', displayName: 'Marilyn' }
-];
-
 const app = express();
-
 const PORT = process.env.PORT || 58880;
 
 //* prevent 304 status code.
@@ -20,15 +13,12 @@ app.disable('etag');
 
 //--> Global Middlaware
 app.use(express.json());
+app.use(usersRouter);
+
 const loggingMiddleware = (req, res, next) => {
     console.log(`${req.method} -> ${req.url}`);
     next();
 };
-
-// app.use(loggingMiddleware, (req, res, next) => {
-//     console.log('Fineshed Logging...');
-//     next();
-// });
 
 //--> Refactoring Part
 const resolveIndexbyUserId = (req, res, next) => {
@@ -43,38 +33,11 @@ const resolveIndexbyUserId = (req, res, next) => {
 
 //--> [ GET ]
 app.get('/',
-    (req, res, next) => { console.log('Base URL 1'); next(); },
-    (req, res, next) => { console.log('Base URL 2'); next(); },
-    (req, res, next) => { console.log('Base URL 3'); next(); },
-
     (req, res) => {
-        res.status(201).send({ msg: 'Hello, World!' });
-    });
-
-// Get All users or filterring
-app.get('/api/users',
-    query('filter')
-        .isString()
-        .notEmpty()
-        .withMessage("Must not be empty")
-        .isLength({ min: 3, max: 10 })
-        .withMessage("Must be at least 3-10 characters"),
-
-    (req, res) => {
-
-        // console.log(req['express-validator#contexts']);
-
-        //? Validation Checked
-        const result = validationResult(req);
-        console.log(result);
-
-        const { query: { filter, value } } = req;
-        if (!filter && !value) return res.send(mockUsers);
-        if (filter && value) return res.send(
-            mockUsers.filter((user) => user[filter].includes(value))
-        )
-        return res.send(mockUsers);
-    });
+        let env = process.env.PORT;
+        res.status(201).send({ msg: `Node Camp! ( ${env} )` });
+    },
+);
 
 // Parameters
 app.get('/api/users/:id', resolveIndexbyUserId, (req, res) => {
@@ -91,18 +54,18 @@ app.get('/api/users/:id', resolveIndexbyUserId, (req, res) => {
 // Query String : Key, Value Pairs, &key=value
 
 //* [ POST ]
-app.post('/api/users',
-    [
-        body('username')
-            .notEmpty()
-            .withMessage('Username cannot be empty')
-            .isLength({ min: 5, max: 32 })
-            .withMessage('Username must be at least 5 characters with a max of 32 characters')
-            .isString()
-            .withMessage('Username must be a string!'),
-        body('displayName')
-            .notEmpty()
-    ],
+app.post('/api/users', checkSchema(createuserValidationSchema),
+    // [
+    //     body('username')
+    //         .notEmpty()
+    //         .withMessage('Username cannot be empty')
+    //         .isLength({ min: 5, max: 32 })
+    //         .withMessage('Username must be at least 5 characters with a max of 32 characters')
+    //         .isString()
+    //         .withMessage('Username must be a string!'),
+    //     body('displayName')
+    //         .notEmpty()
+    // ],
     (req, res) => {
 
         const result = validationResult(req);
@@ -142,9 +105,10 @@ app.delete('/api/users/:id', resolveIndexbyUserId, (req, res) => {
 
 //------------------------------------------//
 //* Listen
-app.listen(58880, () => {
+app.listen(PORT, () => {
     console.log(`Running on Port ${PORT}`);
 });
+
 //------------------------------------------//
 
 //! npm run start:dev //
