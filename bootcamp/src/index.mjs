@@ -1,5 +1,5 @@
 import express, { response } from "express";
-import { query, validationResult, body, matchedData, checkSchema } from 'express-validator'
+import { validationResult, matchedData, checkSchema } from 'express-validator'
 import { createuserValidationSchema } from "./utils/validationSchemas.mjs";
 import usersRouter from "./routes/users.mjs";
 import { mockUsers } from "./utils/constants.mjs";

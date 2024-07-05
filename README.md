@@ -50,12 +50,12 @@ node_modules : 모듈 저장소
 ## - Origin (출처) : &emsp; `Protocol + Host + Port`
 
 - URL e.g. `https://www.exdomain.com:5000/getUser?id=24#top`
-  - `Protocol` : 스키마 (Scheme) -> `https`
-  - `Host` : 도메인 (Domain) -> `www.exdomain.com`
-  - `Port` : 포트번호 (Port Number) -> `5000`
-  - Path : 라우팅 경로 (Rounting) -> `getUser`
-  - Query string : 요청 key, value pair string -> `id=24`
-  - Fragment : 해시 태그 (Hash tab) -> `#top`
+    - `Protocol` : 스키마 (Scheme) -> `https`
+    - `Host` : 도메인 (Domain) -> `www.exdomain.com`
+    - `Port` : 포트번호 (Port Number) -> `5000`
+    - Path : 라우팅 경로 (Rounting) -> `getUser`
+    - Query string : 요청 key, value pair string -> `id=24`
+    - Fragment : 해시 태그 (Hash tab) -> `#top`
 
 ## 동일 출처 정책 (`SOP`, Same-Orgin Policy)
 
