@@ -49,7 +49,24 @@ app.get('/api/users/:id', resolveIndexbyUserId, (req, res) => {
     // const findUser = mockUsers.find((user) => user.id == parsedId);
     if (!findUser) return res.sendStatus(404);
     return res.send({ msg: findUser });
+});
+
+app.get('/sound/:name', (req, res) => {
+    const { name } = req.params;
+
+    switch (name) {
+        case 'cat':
+            return res.send({ msg: '야옹' });
+        case 'dog':
+            return res.send({ msg: '멍멍' });
+        case 'pig':
+            return res.send({ msg: '꿀꿀' });
+        default:
+            return res.send({ msg: '/sound/cat, dog, pig 중 하나를 선택하셈..' });
+    }
 })
+
+
 
 // Query String : Key, Value Pairs, &key=value
 

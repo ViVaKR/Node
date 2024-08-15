@@ -21,7 +21,6 @@ router.get("/api/users",
             return res.send(
                 mockUsers.filter((user) => user[filter].includes(value))
             );
-
         return res.send(mockUsers);
     }
 );
