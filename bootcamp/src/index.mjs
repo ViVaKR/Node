@@ -53,7 +53,7 @@ app.get('/api/users/:id', resolveIndexbyUserId, (req, res) => {
 
 // Query String : Key, Value Pairs, &key=value
 
-//* [ POST ]
+//-->[ POST ]
 app.post('/api/users', checkSchema(createuserValidationSchema),
     // [
     //     body('username')
