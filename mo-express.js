@@ -37,7 +37,3 @@ app.get("/sound/:name", (req, res) => {
 app.listen(PORT, HOST, () => {
     console.log(`Running on http://${HOST}:${PORT}`);
 });
-
-// npm 
-// express, cors
-
