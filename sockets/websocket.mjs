@@ -1,7 +1,7 @@
 import { createRequire } from 'module';
 import { promises as fs } from 'fs';
 const require = createRequire(import.meta.url);
-const { Server, WebSocket } = require('ws');
+const { WebSocket } = require('ws');
 
 const server = new WebSocket.Server({ host: '0.0.0.0', port: 3000 });
 const clients = new Set();

@@ -1,0 +1,12 @@
+html,
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  color: rgb(4, 185, 246);
+  background-color: burlywood;
+}
+p {
+  color: red;
+  background-color: tan;
+}
