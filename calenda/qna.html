@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="qna.css">
+  <title>테이블 형식 날짜 선택기</title>
+</head>
+
+<body>
+  <div id="calendar-container">
+    <div id="calendar-controls">
+      <button id="prev-month">&#8666;</button>
+      <!-- <h2 id="month-year"></h2> -->
+      <h2 id="year"></h2>
+      <h2 id="month"></h2>
+      <button id="next-month">&#8667;</button>
+    </div>
+    <table id="calendar-table">
+      <thead>
+        <tr>
+          <th>일</th>
+          <th>월</th>
+          <th>화</th>
+          <th>수</th>
+          <th>목</th>
+          <th>금</th>
+          <th>토</th>
+        </tr>
+      </thead>
+      <tbody id="calendar-body"></tbody>
+    </table>
+
+    <div style="width: 100%; display: flex; margin-top: 1em; flex-direction: row; justify-content: space-between;">
+      <button id="clear-button">지우기</button>
+      <button id="today-button">오늘</button>
+    </div>
+    <p id="selected-date"></p>
+  </div>
+
+  <!-- 모달 년도 -->
+  <div id="year-modal" class="modal">
+    <div class="modal-content">
+      <h3>연도 선택</h3>
+      <input type="number" id="year-input" placeholder="연도">
+      <button id="set-year">설정</button>
+    </div>
+  </div>
+
+  <!-- 모달 월 -->
+  <div id="month-modal" class="modal">
+    <div class="modal-content">
+      <h3>월 선택</h3>
+      <input type="number" id="month-input" placeholder="월">
+      <button id="set-month">설정</button>
+    </div>
+  </div>
+
+  <script src="qna.js"></script>
+</body>
+
+</html>

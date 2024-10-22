@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- <npm install react-datepicker --save> -->
+  <title>날짜와 시간 선택</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    #calendar-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    #date-input {
+      margin-bottom: 20px;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    #year {
+      width: 56px;
+    }
+
+    #month {
+      width: 56px;
+    }
+
+    #calendar-controls {
+      display: flex;
+      justify-content: space-between;
+      width: 250px;
+      margin-bottom: 10px;
+    }
+
+    select {
+      font-size: 16px;
+      padding: 5px;
+    }
+
+    #calendar table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    #calendar th,
+    #calendar td {
+      padding: 10px;
+      text-align: center;
+      vertical-align: top;
+      cursor: pointer;
+    }
+
+    #calendar td.selected {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .added-number {
+      display: block;
+      font-size: 13px;
+      color: gray;
+      margin-top: 5px;
+    }
+
+    #added-dates {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="calendar-container">
+    <input type="datetime-local" id="date-input">
+    <div id="calendar-controls">
+      <input type="number" id="year" value="2024" />
+      <select name="month" id="month">
+        <option value="1">1월</option>
+        <option value="2">2월</option>
+        <option value="3">3월</option>
+        <option value="4">4월</option>
+        <option value="5">5월</option>
+        <option value="6">6월</option>
+        <option value="7">7월</option>
+        <option value="8">8월</option>
+        <option value="9">9월</option>
+        <option value="10">10월</option>
+        <option value="11">11월</option>
+        <option value="12">12월</option>
+      </select>
+      <button type="button" id="prev-month">이전</button>
+      <span id="current-month-year"></span>
+      <button type="button" id="next-month">다음</button>
+    </div>
+
+    <div id="calendar"></div>
+
+    <div style="margin-top: 10px;">
+      <label for="extraNumber">추가할 숫자: </label>
+      <input type="number" id="extraNumber" placeholder="숫자 입력">
+      <button id="addNumberBtn">숫자 추가</button>
+      <button id="deleteNumberBtn">삭제</button>
+    </div>
+
+    <div id="added-dates">
+
+    </div>
+
+    <script>
+      const addedNumbers = {};
+
+      function generateCalendar(year, month) {
+        const calendar = document.getElementById('calendar');
+        calendar.innerHTML = '';
+
+        const monthNames = ['1월', '2월', '3월', '4월', '5월', '6월',
+          '7월', '8월', '9월', '10월', '11월', '12월'];
+        document.getElementById('current-month-year').innerText = `${year}년 ${monthNames[month]}`;
+
+        const firstDay = new Date(year, month, 1).getDay();
+        const lastDate = new Date(year, month + 1, 0).getDate();
+
+        const table = document.createElement('table');
+        const thead = document.createElement('thead');
+        const headerRow = document.createElement('tr');
+
+        const days = ['일', '월', '화', '수', '목', '금', '토'];
+        days.forEach(day => {
+          const th = document.createElement('th');
+          th.innerText = day;
+          headerRow.appendChild(th);
+        });
+
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+
+        const tbody = document.createElement('tbody');
+        let row = document.createElement('tr');
+
+        for (let i = 0; i < firstDay; i++) {
+          const td = document.createElement('td');
+          row.appendChild(td);
+        }
+
+        for (let date = 1; date <= lastDate; date++) {
+          const day = new Date(year, month, date).getDay();
+          if (day === 0 && date !== 1) {
+            tbody.appendChild(row);
+            row = document.createElement('tr');
+          }
+
+          const td = document.createElement('td');
+          const dateDiv = document.createElement('div');
+          dateDiv.innerText = date;
+
+          td.appendChild(dateDiv);
+
+
+          if (addedNumbers[date]) {
+            const numberDiv = document.createElement('div');
+            numberDiv.innerText = addedNumbers[date];
+            numberDiv.classList.add('added-number');
+            td.appendChild(numberDiv);
+          }
+
+          td.dataset.date = date;
+
+          td.addEventListener('click', function () {
+            document.querySelectorAll('#calendar td').forEach(cell => {
+              cell.classList.remove('selected');
+            });
+            this.classList.add('selected');
+
+            const selectedDate = new Date(year, month, date);
+            const formattedDate = selectedDate.getFullYear() + '-' +
+              String(selectedDate.getMonth() + 1).padStart(2, '0') + '-' +
+              String(selectedDate.getDate()).padStart(2, '0') + 'T' +
+              String(selectedDate.getHours()).padStart(2, '0') + ':' +
+              String(selectedDate.getMinutes()).padStart(2, '0');
+
+            document.getElementById('date-input').value = formattedDate;
+          });
+
+          row.appendChild(td);
+        }
+
+        while (row.children.length < 7) {
+          const td = document.createElement('td');
+          row.appendChild(td);
+        }
+
+        tbody.appendChild(row);
+        table.appendChild(tbody);
+        calendar.appendChild(table);
+      }
+
+      const today = new Date();
+      let currentYear = today.getFullYear();
+      let currentMonth = today.getMonth();
+
+      generateCalendar(currentYear, currentMonth);
+
+      document.getElementById('prev-month').addEventListener('click', function () {
+        currentMonth--;
+        if (currentMonth < 0) {
+          currentMonth = 11;
+          currentYear--;
+        }
+        generateCalendar(currentYear, currentMonth);
+      });
+
+      document.getElementById('next-month').addEventListener('click', function () {
+        currentMonth++;
+        if (currentMonth > 11) {
+          currentMonth = 0;
+          currentYear++;
+        }
+        generateCalendar(currentYear, currentMonth);
+      });
+
+      function checkLeapYear(year) {
+        if (year % 400 == 0) {
+          return true;
+        } else if (year % 100 == 0) {
+          return false;
+        } else if (year % 4 == 0) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+
+      function getFirstDayOfweek(year, month) {
+        if (month < 10) month = "0" + month;
+
+        return (new Date(year + "-" + month + "-0.1")).getDay();
+      }
+
+      function changeYearMonth(year, month) {
+        let month_day = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+        if (month == 2) {
+          if (checkLeapYear(year)) month_day[1] = 29;
+        }
+
+        let first_day_of_week = getFirstDayOfweek(year, month);
+        let arr_calendar = [];
+        for (let i = 0; i < first_day_of_week; i++) {
+          arr_calendar.push("");
+        }
+
+        for (let i = 1; i < month_day[month - 1]; i++) {
+          arr_calendar.push(String(i));
+        }
+
+        let remain_day = 7 - (arr_calendar.length % 7);
+        if (remain_day < 7) {
+          for (let i = 0; i < remain_day; i++) {
+            arr_calendar.push("");
+          }
+        }
+
+        renderCalendar(arr_calendar);
+      }
+
+      function renderCalendar(data) {
+        let h = [];
+        for (let i = 0; i < data.length; i++) {
+          h.push('')
+        }
+      }
+      // 숫자 추가
+      document.getElementById('addNumberBtn').addEventListener('click', function () {
+        const date = document.querySelector('#calendar td.selected');
+        const extraNumber = document.getElementById('extraNumber').value;
+
+        if (date && extraNumber) {
+          const day = date.dataset.date;
+          addedNumbers[day] = extraNumber;
+          generateCalendar(currentYear, currentMonth);
+        }
+      });
+
+      // 숫자 삭제
+      document.getElementById('deleteNumberBtn').addEventListener('click', function () {
+        const date = document.querySelector('#calendar td.selected');
+
+        if (date) {
+          const day = date.dataset.date;
+          delete addedNumbers[day];
+          generateCalendar(currentYear, currentMonth);
+        }
+      });
+    </script>
+
+</body>
+
+</html>

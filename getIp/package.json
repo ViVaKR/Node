@@ -1,0 +1,21 @@
+{
+  "name": "getip",
+  "version": "1.0.0",
+  "main": "server.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "node-fetch": "^3.3.2",
+    "public-ip": "^7.0.1"
+  },
+  "devDependencies": {
+    "express": "^4.21.1"
+  }
+}

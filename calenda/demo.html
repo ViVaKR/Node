@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>날짜와 시간 선택</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    #calendar-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    #date-input {
+      margin-bottom: 20px;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    #year {
+      width: 56px;
+    }
+
+    #month {
+      width: 56px;
+    }
+
+    #calendar-controls {
+      display: flex;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="calendar-container">
+    <input type="date" id="date-input">
+    <button id="show-date">선택된 날짜 보기</button>
+    <p id="selected-date"></p>
+  </div>
+
+  <script>
+    document.getElementById('show-date').addEventListener('click', () => {
+      const dateInput = document.getElementById('date-input').value;
+      document.getElementById('selected-date').textContent = `선택된 날짜: ${dateInput}`;
+    });
+  </script>
+</body>
+
+</html>
