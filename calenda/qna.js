@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const todayButton = document.getElementById('today-button'); // 오늘 날짜로 이동하는 버튼
     const clearButton = document.getElementById('clear-button'); // 선택된 날짜를 지우는 버튼
     const selectedDateElement = document.getElementById('selected-date'); // 선택된 날짜를 표시하는
+
+    // 모달
     const yearModal = document.getElementById('year-modal'); // 년도를 설정하는 모달
     const yearInput = document.getElementById('year-input'); // 년도를 입력하는 input
     const setYearButton = document.getElementById('set-year'); // 년도를 설정하는 버튼
@@ -16,14 +18,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const monthInput = document.getElementById('month-input'); // 월을 입력하는 input
     const setMonthButton = document.getElementById('set-month'); // 월을 설정하는 버튼
 
+    //--> 요청된 모달 코드
+    const yearMonthModal = document.getElementById('year-month-modal');
+    const yearSelect = document.getElementById('year-select');
+    const monthSelect = document.getElementById('month-select');
+    const setYearMonthButton = document.getElementById('set-year-month');
+    const yearMonth = document.getElementById('year-month');
+
     let currentDate = new Date();
     let selectedDate = null;
+
+    // 최소 및 최대 년도 설정
+    const minYear = 1900;
+    const maxYear = 2100;
+    yearInput.min = minYear;
+    yearInput.max = maxYear;
 
     function renderCalendar(date) { // 달력을 그리는 함수
         calendarBody.innerHTML = ''; // 달력을 초기화
         const year = date.getFullYear(); // 현재 년도
         const month = date.getMonth(); // 현재 달
 
+        //--> 요청된 모달 코드
+        yearMonth.textContent = `${year}년 ${month + 1}월`;
         // monthYear.textContent = `${year}년 ${date.toLocaleString('default', { month: 'long' })}`;
         yearEl.textContent = `${year}년`;
         monthEl.textContent = `${month + 1}월`;
@@ -91,6 +108,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    //--> 요청된 모달 코드
+    function populateYearSelect() {
+        const currentYear = new Date().getFullYear();
+        for (let i = minYear; i <= maxYear; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = `${i}년`;
+            yearSelect.appendChild(option);
+        }
+    }
+
     prevMonthButton.addEventListener('click', () => { // 이전 달로 이동하는 버튼을 클릭하면
         currentDate.setMonth(currentDate.getMonth() - 1); // 현재 달을 이전 달로 변경
         renderCalendar(currentDate); // 달력을 다시 그림
@@ -114,8 +142,36 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     yearEl.addEventListener('click', () => { // 년도를 클릭하면
+        const currentYear = currentDate.getFullYear();
+        yearInput.value = currentYear;
         yearModal.style.display = 'block'; // 년도 설정 모달을 보여줌
     });
+
+    // --> 요청된 모달 코드, 년도와 월을 설정하는 버튼을 클릭하면 년도와 월을 설정하는 모달을 보여줌
+    yearMonth.addEventListener('click', () => {
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth();
+
+        yearSelect.value = currentYear;
+        monthSelect.value = currentMonth;
+        yearMonthModal.style.display = 'block';
+    });
+
+    // --> 모달 창을 닫는 버튼, 년도와 월을 설정하는 모달을 닫으면서 년도와 월을 설정
+    setYearMonthButton.addEventListener('click', () => {
+        const year = parseInt(yearSelect.value);
+        const month = parseInt(monthSelect.value);
+
+        if (!isNaN(year) && !isNaN(month)) {
+            currentDate.setFullYear(year);
+            currentDate.setMonth(month);
+            renderCalendar(currentDate);
+            yearMonthModal.style.display = 'none';
+        } else {
+            alert('올바른 년도와 월을 선택하세요.');
+        }
+    });
+
 
     setYearButton.addEventListener('click', () => { // 년도 설정 버튼을 클릭하면
         const year = parseInt(yearInput.value); // 입력한 년도를 가져옴
@@ -129,14 +185,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    window.addEventListener('click', (event) => { // 모달 외부를 클릭하면
-        if (event.target === yearModal) { // 년도 설정 모달이면
-            yearModal.style.display = 'none'; // 년도 설정 모달을 숨김
-        }
-    });
 
     // Month
     monthEl.addEventListener('click', () => { // 월을 클릭하면
+        const currentMonth = currentDate.getMonth();
+        monthInput.value = currentMonth + 1;
         monthModal.style.display = 'block'; // 월 설정 모달을 보여줌
     });
 
@@ -153,10 +206,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     window.addEventListener('click', (event) => { // 모달 외부를 클릭하면
+        if (event.target === yearModal) { // 년도 설정 모달이면
+            yearModal.style.display = 'none'; // 년도 설정 모달을 숨김
+        }
+    });
+
+    window.addEventListener('click', (event) => { // 모달 외부를 클릭하면
         if (event.target === monthModal) { // 월 설정 모달이면
             monthModal.style.display = 'none'; // 월 설정 모달을 숨김
         }
     });
 
+    window.addEventListener('click', (event) => { // 모달 외부를 클릭하면
+        if (event.target === yearMonthModal) { // 년월 설정 모달이면
+            yearMonthModal.style.display = 'none';  // 년월 설정 모달을 숨김
+        }
+    });
+
+
+    populateYearSelect(); // 년도 선택 목록을 채움
     renderCalendar(currentDate); // 페이지가 로드되면 달력을 그림
 });

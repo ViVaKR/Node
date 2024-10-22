@@ -19,6 +19,7 @@ body {
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: calc(100% - 20px); /* 폭을 100%에서 20px을 뺀 값으로 설정 */
 }
 
 table {
@@ -71,11 +72,30 @@ td.other-month {
   color: #007bff;
   justify-content: space-between;
   width: 100%;
-  background-color: #edf504;
   margin-bottom: 10px;
 }
 
 #calendar-controls button {
+  padding: 10px;
+  background-color: transparent;
+  color: #007bff;
+  border: none;
+  border-radius: 5px;
+  font-size: 3em;
+  cursor: pointer;
+}
+
+#calendar-controls-requested {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  color: #007bff;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+#calendar-controls-requested button {
   padding: 10px;
   background-color: transparent;
   color: #007bff;
@@ -120,6 +140,9 @@ button:hover {
   color: rgb(251, 5, 5);
 }
 
+#year-month {
+  cursor: pointer;
+}
 #selected-date {
   margin-top: 20px;
   font-size: 18px;
@@ -149,7 +172,21 @@ button:hover {
   max-width: 400px;
   border-radius: 10px;
 }
-
+.modal-content select {
+  width: 100%;
+  padding: 10px;
+  padding-right: 100px; /* 오른쪽 패딩 추가 */
+  margin: 10px 0;
+  font-size: 16px;
+  appearance: none;
+  /* 기본 드롭다운 아이콘 제거 */
+  /* background: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="%23333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><path d="M6 9l6-6 6 6"/></svg>')
+    no-repeat right 10px center; */
+  background-color: white;
+  background-size: 16px 16px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
 .modal-content input {
   width: calc(100% - 25px);
   padding: 10px;
@@ -177,4 +214,8 @@ button:hover {
   border-radius: 5px;
   cursor: pointer;
   width: 100%;
+}
+
+.modal-content button:focus {
+  outline: 2px solid #0056b3;
 }

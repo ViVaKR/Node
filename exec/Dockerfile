@@ -16,15 +16,18 @@ COPY . .
 # 프로덕션 스테이지
 FROM node:14-alpine
 
-# 작업 디렉토리 설정
-WORKDIR /usr/src/app
-
-# 빌드된 파일 복사
-COPY --from=builder /usr/src/app .
-
 # 일반 사용자 생성 및 권한 설정
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-RUN chown -R appuser:appgroup /usr/src/app
+
+# 작업 디렉토리 설정 (appuser의 홈 디렉토리)
+WORKDIR /home/appuser
+
+# 빌드된 파일 복사
+COPY --from=builder /usr/src/app /usr/src/app
+
+# 파일 소유권 변경 (root 외에는 접근 불가)
+RUN chown -R root:root /usr/src/app
+RUN chmod -R 700 /usr/src/app
 
 # 일반 사용자로 전환
 USER appuser
@@ -33,4 +36,4 @@ USER appuser
 EXPOSE 8293
 
 # 애플리케이션 실행 명령
-CMD ["node", "server.mjs"]
+CMD ["node", "/usr/src/app/server.mjs"]

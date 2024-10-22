@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 
 // 요청 횟수를 추적하기 위한 객체
 const requestCounts = {}; // 클라이언트 IP 주소를 키로 사용
-const MAX_REQUESTS = 30; // 최대 요청 횟수
+const MAX_REQUESTS = 120; // 최대 요청 횟수
 const TIME_WINDOW = 60 * 60 * 1000; // 시간 창 (밀리초 단위, 여기서는 1시간)
 
 // 요청 횟수를 제한하는 미들웨어

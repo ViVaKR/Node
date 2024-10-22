@@ -11,12 +11,18 @@
 <body>
   <div id="calendar-container">
     <div id="calendar-controls">
-      <button id="prev-month">&#8666;</button>
-      <!-- <h2 id="month-year"></h2> -->
-      <h2 id="year"></h2>
-      <h2 id="month"></h2>
-      <button id="next-month">&#8667;</button>
+      <button id="prev-month">&#10092;</button>
+      <h1 id="year"></h1>
+      <h1 id="month"></h1>
+      <button id="next-month">&#10093;</button>
     </div>
+
+    <div id="calendar-controls-requested">
+      <button id="prev-month">&#10092;</button>
+      <h1 id="year-month"></h1>
+      <button id="next-month">&#10093;</button>
+    </div>
+
     <table id="calendar-table">
       <thead>
         <tr>
@@ -42,8 +48,8 @@
   <!-- 모달 년도 -->
   <div id="year-modal" class="modal">
     <div class="modal-content">
-      <h3>연도 선택</h3>
-      <input type="number" id="year-input" placeholder="연도">
+      <h3>연도 입력 (1900 - 2100)</h3>
+      <input type="number" min="1990" max="2100" id="year-input" placeholder="연도">
       <button id="set-year">설정</button>
     </div>
   </div>
@@ -51,9 +57,32 @@
   <!-- 모달 월 -->
   <div id="month-modal" class="modal">
     <div class="modal-content">
-      <h3>월 선택</h3>
-      <input type="number" id="month-input" placeholder="월">
+      <h3>월 입력 (1 - 12)</h3>
+      <input type="number" min="1" max="12" id="month-input" placeholder="월">
       <button id="set-month">설정</button>
+    </div>
+  </div>
+
+  <!-- 모달 -->
+  <div id="year-month-modal" class="modal">
+    <div class="modal-content">
+      <h3>년도와 월 선택</h3>
+      <select id="year-select"></select>
+      <select id="month-select">
+        <option value="0">1월</option>
+        <option value="1">2월</option>
+        <option value="2">3월</option>
+        <option value="3">4월</option>
+        <option value="4">5월</option>
+        <option value="5">6월</option>
+        <option value="6">7월</option>
+        <option value="7">8월</option>
+        <option value="8">9월</option>
+        <option value="9">10월</option>
+        <option value="10">11월</option>
+        <option value="11">12월</option>
+      </select>
+      <button id="set-year-month">설정</button>
     </div>
   </div>
 

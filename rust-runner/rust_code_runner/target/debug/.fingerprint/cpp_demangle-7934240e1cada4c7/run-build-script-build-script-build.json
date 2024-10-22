@@ -1,0 +1,1 @@
+{"rustc":6400416340020592234,"features":"","declared_features":"","target":0,"profile":0,"path":0,"deps":[[15028367176146244294,"build_script_build",false,18116701914733390591]],"local":[{"RerunIfChanged":{"output":"debug/build/cpp_demangle-7934240e1cada4c7/output","paths":["build.rs"]}}],"rustflags":[],"metadata":0,"config":0,"compile_kind":0}
