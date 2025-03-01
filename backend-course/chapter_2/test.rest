@@ -1,0 +1,22 @@
+### TEST GET / WEBSITE
+GET http://localhost:3333
+
+
+### TEST GET /dashboard
+GET http://localhost:3333/dashboard
+
+### DATA ENDPOINT
+GET http://localhost:3333/api/data
+
+
+### TEST POST /api/data
+POST http://localhost:3333/api/data
+Content-Type: application/json
+
+{
+  "name": "Giga Mesh",
+  "age" : 58
+}
+
+### TEST DELETE /api/endpoint
+DELETE http://localhost:3333/api/endpoint

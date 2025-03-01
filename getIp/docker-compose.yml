@@ -9,3 +9,7 @@ services:
       - '5028:5028' # 포트 매핑
     command: node server.mjs
     restart: always # 자동 재시작 설정
+
+
+# docker-compose up --build
+# docker-compose down
